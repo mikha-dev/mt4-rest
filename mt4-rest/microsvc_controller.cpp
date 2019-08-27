@@ -153,12 +153,12 @@ void MicroserviceController::handlePost(http_request message) {
 	try {
 
 		auto path = requestPath(message);
-		auto params = requestQueryParams(message);
-		auto headers = message.headers();
+		auto params = requestQueryParams(message);		
 
 		ucout << message.to_string() << endl;
 
 		message.extract_utf8string(true).then([=](std::string body) {
+			auto headers = message.headers();
 
 			web::json::value result = web::json::value::object();
 			web::json::value jPath = web::json::value::array(path.size());
@@ -172,15 +172,19 @@ void MicroserviceController::handlePost(http_request message) {
 			}
 			result[L"path"] = jPath;
 
-			/* for (auto it = params.begin(); it != params.end(); ++it) {
+			for (auto it = params.begin(); it != params.end(); ++it) {
 				jQuery[it->first] = web::json::value::string(it->second);
 			}
 			result[L"query"] = jQuery;
-
-			for (auto it = headers.begin(); it != headers.end(); ++it) {
-				jHeader[it->first] = web::json::value::string(it->second);
+			
+			/*for (auto it = headers.begin(); it != headers.end(); ++it) {
+				if(!it->first.empty() && !it->second.empty())
+					jHeader[it->first] = web::json::value::string(it->second);
 			}
 			result[L"header"] = jHeader; */
+
+			
+			result[L"host"] = web::json::value::string(headers[header_names::host]);
 
 			result[L"body"] = web::json::value::string(s2ws(body));
 
