@@ -104,11 +104,14 @@ void MicroserviceController::handleGet(http_request message) {
 			jQuery[it->first] = web::json::value::string(it->second);
 		}
 		result[L"query"] = jQuery; 
+		*/
 
 		for (auto it = headers.begin(); it != headers.end(); ++it) {
 			jHeader[it->first] = web::json::value::string(it->second);
 		}
-		result[L"header"] = jHeader; */
+		result[L"header"] = jHeader;
+
+		result[L"host"] = web::json::value::string(headers[header_names::host]);
 
 		string command = ws2s(result.serialize());
 		commands.push_back(command);
